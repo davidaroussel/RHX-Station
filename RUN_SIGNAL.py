@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import matplotlib.pyplot as plt
 
+LVDS_BOARD = True
 
 # GPIO Pins configuration
 MOSI = 20
@@ -15,9 +16,13 @@ CONTROL_GPIO = 12
 GPIO.setwarnings(False)
 
 # Initialize GPIO
+if not LVDS_BOARD:
+    GPIO_SETUP = GPIO.HIGH
+else:
+    GPIO_SETUP = GPIO.LOW
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(CS, GPIO.OUT, initial=GPIO.HIGH)
-GPIO.setup(CONTROL_GPIO, GPIO.OUT, initial=GPIO.HIGH)
+GPIO.setup(CONTROL_GPIO, GPIO.OUT, initial=GPIO_SETUP)
 
 # Initialize SPI
 spi = spidev.SpiDev()
@@ -218,8 +223,8 @@ if __name__ == "__main__":
     # Sample from channels 0–3 for 2 seconds at 10 kHz
     sampled_data = sample_intan_channels(
         channels=[0, 1, 2, 3],
-        sampling_rate=10,
-        duration_seconds=15,
+        sampling_rate=1000,
+        duration_seconds=10,
         chip_id=chip_id
     )
     print("DONE SAMPLING")
